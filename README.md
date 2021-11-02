@@ -10,7 +10,7 @@ Outil de scan de code
 
 # Outils pour les scans
 
-(liste en cour de développement)
+(liste en cours de développement)
 
 | File type | scanner |
 | :--- | :---: |
