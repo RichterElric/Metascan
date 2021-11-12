@@ -1,6 +1,9 @@
 package Kics
 
-import "fmt"
+import (
+	"fmt"
+	"os/exec"
+)
 
 type Kics struct {
 	path string
@@ -11,12 +14,16 @@ func New(_path string) Kics {
 	return k
 }
 
-func (Kics) GetDependency() bool{
+func (k Kics) GetDependency() bool{
 	fmt.Println("TODO: Téléchargement de la dépendance")
 	return true
 }
 
-func (Kics) Scan() string{
-	return "Results !"
+func (k Kics) Scan() string{
+	result,error := exec.Command("C:\\Users\\Nicolas\\Downloads\\kics_1.4.7_windows_x64\\kics.exe", "help -p" + k.path).Output()
+	if error!=nil{
+		fmt.Println(error.Error())
+	}
+	return string(result)
 }
 
