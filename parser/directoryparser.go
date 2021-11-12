@@ -19,7 +19,7 @@ func visit(path string, di fs.DirEntry, err error) error {
 	if filepath.Ext(path) != "." && filepath.Ext(path) != ".." {
 		match, _ := regexp.Match(kicksCheck, []byte(strings.ToLower(path)))
 		if match {
-			extmap["kicks"] = append(extmap["kicks"], path)
+			extmap["kics"] = append(extmap["kics"], path)
 		} else if filepath.Ext(path) != "" {
 			extmap[filepath.Ext(path)] = append(extmap[filepath.Ext(path)], path)
 		}

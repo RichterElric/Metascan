@@ -9,7 +9,10 @@ import (
 )
 
 func main() {
-	baseDir := flag.String("d", "D:\\GIT_Perso\\sample-programs-main", "the base directory for the recursive search")
+	baseDir := flag.String("d", ".", "the base directory for the recursive search")
+	kicksEnable := flag.Bool("kics", true, "use kics")
+	keyFinderEnable := flag.Bool("kf", true, "use keyFinder")
+	gitSecretEnable := flag.Bool("gits", true, "use git Secret")
 
 	flag.Parse()
 
@@ -17,11 +20,17 @@ func main() {
 	start := time.Now()
 
 	extFiles := parser.GetFiles(*baseDir)
-	log.Println(extFiles)
+	//log.Println(extFiles)
 
-	if _, ok := extFiles["kicks"]; ok {
-		fmt.Println("USE KICKS")
-		fmt.Println(extFiles["kicks"])
+	if _, ok := extFiles["kics"]; ok && *kicksEnable {
+		fmt.Println("USE KICS")
+		fmt.Println(extFiles["kics"])
+	}
+	if *keyFinderEnable {
+		fmt.Println("USE KEY FINDER")
+	}
+	if *gitSecretEnable {
+		fmt.Println("USE GIT SECRET")
 	}
 
 	elapsed := time.Since(start)
