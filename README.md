@@ -17,3 +17,7 @@ Outil de scan de code
 | Docker, docker compose, kubernetes ... | [Kics](https://github.com/Checkmarx/kics)|
 | ssh keys | [keyfinder](https://github.com/CERTCC/keyfinder)|
 | password / keys | [git secret](https://github.com/awslabs/git-secrets)|
+
+# Repo pour le dev
+
+Repo avec pleins de types de programmes : https://github.com/TheRenegadeCoder/sample-programs
