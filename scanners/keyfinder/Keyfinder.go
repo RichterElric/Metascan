@@ -18,7 +18,7 @@ func New(_path string, _output string) Keyfinder {
 func (k Keyfinder) Scan() string{
 	fmt.Println("TODO: Tester le bon téléchargement de la dépendance")
 	fmt.Println("TODO: Récupérer le lieu de téléchargement pour l'insérer dans la commande")
-	result,error := exec.Command("python3", "C:\\Users\\Nicolas\\Downloads\\keyfinder\\keyfinder.py").Output()
+	result,error := exec.Command("python", "C:\\Users\\nicol\\Downloads\\keyfinder-master\\keyfinder.py", "-k", k.path).Output()
 	if error!=nil{
 		fmt.Println(error.Error())
 	}
