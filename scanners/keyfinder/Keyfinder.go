@@ -12,15 +12,7 @@ type Keyfinder struct {
 
 func New(_path string, _output string) Keyfinder {
 	k := Keyfinder{_path, _output}
-	k.checkDependency()
 	return k
-}
-
-func (k Keyfinder) checkDependency() bool{
-	// TODO: if no depentency then download else return
-	// TODO: installer python ?
-	exec.Command("pip3 install androguard python-magic PyOpenSSL")
-	return true
 }
 
 func (k Keyfinder) Scan() string{
