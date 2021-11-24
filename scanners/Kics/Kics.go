@@ -8,8 +8,8 @@ import (
 )
 
 type Kics struct {
-	path string
-	output string
+	path          string
+	output        string
 	outputChannel chan string
 }
 
@@ -20,7 +20,7 @@ func New(_path string, _output string, _outputChannel chan string) Kics {
 
 func (k Kics) Scan() {
 	fmt.Println("TODO: Récupérer le lieu de téléchargement pour l'insérer dans la commande")
-	cmd := exec.Command("D:\\GIT_Perso\\Metascan\\bin\\kicks\\kics.exe",
+	cmd := exec.Command("bin\\kics.exe",
 		"-s", "scan", "-p", k.path, "-o", k.output, "--output-name", "kics.json")
 
 	err := cmd.Run()
@@ -39,6 +39,3 @@ func (k Kics) Scan() {
 	kicsReturn := "KICS \n"
 	k.outputChannel <- kicsReturn + string(body)
 }
-
-
-
