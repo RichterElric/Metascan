@@ -24,19 +24,26 @@ func main() {
 	//log.Println(extFiles)
 
 	outputChannel := make(chan string)
+	nbOutput := 0
 
 	if _, ok := extFiles["kics"]; ok && *kicksEnable {
 		k := Kics.New(*baseDir, ".", outputChannel)
 		go k.Scan()
+		nbOutput++
 	}
 	if *keyFinderEnable {
 		fmt.Println("USE KEY FINDER")
+		//nbOutput++
 	}
 	if *gitSecretEnable {
 		fmt.Println("USE GIT SECRET")
+		//nbOutput++
 	}
 
-	fmt.Println(outputChannel)
+	for i := 0; i < nbOutput; i++ {
+		fmt.Println(<-outputChannel)
+	}
+
 	elapsed := time.Since(start)
 	log.Printf("FileParser took %s", elapsed)
 }
