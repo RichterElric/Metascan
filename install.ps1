@@ -10,10 +10,10 @@ if (-not (Test-Path "$PSScriptRoot/bin"))
     New-Item -ItemType Directory -Path "$PSScriptRoot/bin" | Out-Null
 }
 # Install kics
-if (-not [System.IO.File]::Exists("$PSScriptRoot/bin/kics.exe"))
+if (-not [System.IO.File]::Exists("$PSScriptRoot/bin/kics/kics.exe"))
 {
     Invoke-WebRequest "https://github.com/Checkmarx/kics/releases/download/v1.4.7/kics_1.4.7_windows_x64.zip" -O "$PSScriptRoot/bin/kics.zip"
-    Expand-Archive "$PSScriptRoot/bin/kics.zip" -DestinationPath "$PSScriptRoot/bin/"
+    Expand-Archive "$PSScriptRoot/bin/kics.zip" -DestinationPath "$PSScriptRoot/bin/kics/"
     Remove-Item -Path "$PSScriptRoot/bin/kics.zip"
 }
 # Install git-secret
