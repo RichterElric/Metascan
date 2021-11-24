@@ -2,6 +2,7 @@ package main
 
 import (
 	"Metascan/main/parser"
+	"Metascan/main/scanners/Kics"
 	"flag"
 	"fmt"
 	"log"
@@ -22,9 +23,11 @@ func main() {
 	extFiles := parser.GetFiles(*baseDir)
 	//log.Println(extFiles)
 
+	outputChannel := make(chan string)
+
 	if _, ok := extFiles["kics"]; ok && *kicksEnable {
-		fmt.Println("USE KICS")
-		fmt.Println(extFiles["kics"])
+		k := Kics.New(*baseDir, ".", outputChannel)
+		go k.Scan()
 	}
 	if *keyFinderEnable {
 		fmt.Println("USE KEY FINDER")
@@ -33,6 +36,7 @@ func main() {
 		fmt.Println("USE GIT SECRET")
 	}
 
+	fmt.Println(outputChannel)
 	elapsed := time.Since(start)
 	log.Printf("FileParser took %s", elapsed)
 }
