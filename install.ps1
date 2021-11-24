@@ -2,6 +2,8 @@
 
 # Check if python exist
 Write-Host "Make sure python 3 and pip is installed on your system"
+# Remove error print
+$ErrorActionPreference = 'SilentlyContinue'
 
 if (-not (Test-Path "$PSScriptRoot/bin"))
 {
@@ -21,7 +23,7 @@ if (-not (Test-Path "$PSScriptRoot/bin/gitsecret"))
     Expand-Archive "$PSScriptRoot/bin/gitsecret.zip" -DestinationPath "$PSScriptRoot/bin/gitsecret"
     Get-ChildItem -Path "$PSScriptRoot/bin/gitsecret/git-secrets-master" -Recurse -File | Move-Item -Destination "$PSScriptRoot/bin/gitsecret/"
     Remove-Item -Path "$PSScriptRoot/bin/gitsecret.zip"
-    & "$PSScriptRoot/bin/gitsecret/install.ps1"
+    & "$PSScriptRoot/bin/gitsecret/install.ps1" | Out-Null
 }
 # Install Keyfinder
 if (-not -(Test-Path "$PSScriptRoot/bin/keyfinder"))
@@ -31,5 +33,5 @@ if (-not -(Test-Path "$PSScriptRoot/bin/keyfinder"))
     Get-ChildItem -Path "$PSScriptRoot/bin/keyfinder/keyfinder-master" -Recurse -File | Move-Item -Destination "$PSScriptRoot/bin/keyfinder/"
     Remove-Item -Path "$PSScriptRoot/bin/keyfinder.zip"
     Remove-Item -Path "$PSScriptRoot/bin/keyfinder/keyfinder-master"
-    Invoke-Item (start powershell "pip install install androguard python-magic-bin PyOpenSSL")
+    Invoke-Item (start powershell "pip install install androguard python-magic-bin PyOpenSSL") | Out-Null
 }
