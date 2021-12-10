@@ -2,6 +2,7 @@ package main
 
 import (
 	"Metascan/main/parser"
+	Dependency_checker "Metascan/main/scanners/Dependency-checker"
 	"Metascan/main/scanners/Kics"
 	"flag"
 	"fmt"
@@ -14,6 +15,7 @@ func main() {
 	kicksEnable := flag.Bool("kics", true, "use kics")
 	keyFinderEnable := flag.Bool("kf", true, "use keyFinder")
 	gitSecretEnable := flag.Bool("gits", true, "use git Secret")
+	dependencyCheckerEnable := flag.Bool("dc", true, "use git Secret")
 
 	flag.Parse()
 
@@ -38,6 +40,11 @@ func main() {
 	if *gitSecretEnable {
 		fmt.Println("USE GIT SECRET")
 		//nbOutput++
+	}
+	if *dependencyCheckerEnable {
+		k := Dependency_checker.New(*baseDir, ".", outputChannel)
+		go k.Scan()
+		nbOutput++
 	}
 
 	for i := 0; i < nbOutput; i++ {
