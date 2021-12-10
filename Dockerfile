@@ -35,3 +35,10 @@ RUN git clone https://github.com/awslabs/git-secrets.git ./bin/gitsecret/ \
 RUN wget https://github.com/jeremylong/DependencyCheck/releases/download/v6.5.0/dependency-check-6.5.0-release.zip -O "./bin/dep_check.zip" -q \
     && unzip -q "./bin/dep_check.zip" -d "./bin" \
     && rm "./bin/dep_check.zip"
+
+# Build the app
+RUN go build -o metascan
+
+# We run the command
+# Commenter la ligne en dessous pour que le docker s'arrète pas direct après s'être lancé
+ENTRYPOINT ["/go/src/Metascan/metascan"]

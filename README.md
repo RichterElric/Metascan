@@ -1,6 +1,18 @@
 # Metascan
 Outil de scan de code
 
+# Build le projet
+
+- deux scripts sont présent dans le projet : install.ps1 & install.sh pour l'installation des dépendances.
+- Pour une installation plus pratique : un dockerfile est à disposition : dans le dossier racine Metascan
+```docker
+docker build . -t metascan
+```
+puis :
+```docker
+docker run metascan "args"
+```
+
 
 # Documentation Go
 
