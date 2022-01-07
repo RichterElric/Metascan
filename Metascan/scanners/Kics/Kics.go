@@ -1,7 +1,7 @@
 package Kics
 
 import (
-	"fmt"
+	"Metascan/main/log_templates/Entry"
 	"github.com/Jeffail/gabs/v2"
 	"io/ioutil"
 	"log"
@@ -12,16 +12,15 @@ import (
 type Kics struct {
 	path          string
 	output        string
-	outputChannel chan string
+	outputChannel chan []Entry.Entry
 }
 
-func New(_path string, _output string, _outputChannel chan string) Kics {
+func New(_path string, _output string, _outputChannel chan []Entry.Entry) Kics {
 	k := Kics{_path, _output, _outputChannel}
 	return k
 }
 
 func (k Kics) Scan() {
-	fmt.Println("TODO: Récupérer le lieu de téléchargement pour l'insérer dans la commande")
 	cmd := exec.Command("./bin/kics/kics",
 		"-s", "scan", "-p", k.path, "-o", k.output, "--output-name", "kics.json")
 
@@ -44,6 +43,8 @@ func (k Kics) Scan() {
 	}
 	// S is shorthand for Search
 	i := 0
+	var entries []Entry.Entry
+
 	for range jsonParsed.S("queries").Children() {
 		files := jsonParsed.Path("queries." + strconv.Itoa(i) + ".files")
 
@@ -58,7 +59,8 @@ func (k Kics) Scan() {
 				description := jsonParsed.Path("queries."+strconv.Itoa(i)+".files."+strconv.Itoa(j)+".actual_value").String() + " at line : " + line
 				fix := jsonParsed.Path("queries." + strconv.Itoa(i) + ".files." + strconv.Itoa(j) + ".expected_value").String()
 
-				fmt.Println(issueName, fileName, severity, description, fix)
+				entry := Entry.New(fileName, issueName, severity, "", "", description, fix)
+				entries = append(entries, *entry)
 
 				j++
 			}
@@ -66,6 +68,5 @@ func (k Kics) Scan() {
 		i++
 	}
 
-	kicsReturn := "KICS \n"
-	k.outputChannel <- kicsReturn + string(body)
+	k.outputChannel <- entries
 }
