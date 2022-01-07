@@ -20,7 +20,7 @@ func New(_path string, _output string, _outputChannel chan string) Kics {
 
 func (k Kics) Scan() {
 	fmt.Println("TODO: Récupérer le lieu de téléchargement pour l'insérer dans la commande")
-	cmd := exec.Command(".\\bin\\kics\\kics",
+	cmd := exec.Command("./bin/kics/kics",
 		"-s", "scan", "-p", k.path, "-o", k.output, "--output-name", "kics.json")
 
 	err := cmd.Run()

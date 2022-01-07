@@ -10,7 +10,7 @@ docker build . -t metascan
 ```
 puis :
 ```docker
-docker run metascan "args"
+docker run --rm metascan "args"
 ```
 
 

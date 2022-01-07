@@ -21,7 +21,7 @@ func New(_path string, _output string, _outputChannel chan string) DependencyChe
 }
 
 func (dc DependencyChecker) Scan() {
-	cmd := exec.Command(".\bin\\dependency-check\\bin\\dependency-check.sh",
+	cmd := exec.Command("./bin/dependency-check/bin/dependency-check.sh",
 		"--enableExperimental", "--go", "/usr/local/go/bin/go", "-f", "JSON", "-o", dc.output+"/dependency-check.json", "-s", dc.path)
 	//TODO : mettre les paths en absolu avec le docker
 
