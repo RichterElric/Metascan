@@ -5,12 +5,17 @@ Outil de scan de code
 
 - deux scripts sont présent dans le projet : install.ps1 & install.sh pour l'installation des dépendances.
 - Pour une installation plus pratique : un dockerfile est à disposition : dans le dossier racine Metascan
-```docker
+```bash
 docker build . -t metascan
 ```
 puis :
-```docker
-docker run --rm metascan "args"
+sur windows
+```bash
+docker run --rm -v C:\chemin\absolu\vers\le\dossier:/opt/scan metascan -dc=false
+```
+sur linux :
+```bash
+docker run --rm -v /chemin/absolu/vers/le/dossier:/opt/scan metascan -dc=false
 ```
 
 

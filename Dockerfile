@@ -21,7 +21,7 @@ RUN apk update \
 
 # Kics
 RUN mkdir bin \
-    && wget https://github.com/Checkmarx/kics/releases/download/v1.4.8/kics_1.4.8_linux_x64.tar.gz -O "./bin/kics.tar.gz" -q \
+    && wget https://github.com/Checkmarx/kics/releases/download/v1.4.9/kics_1.4.9_linux_x64.tar.gz -O "./bin/kics.tar.gz" -q \
     && mkdir ./bin/kics \
     && tar -xf "./bin/kics.tar.gz" -C "./bin/kics" \
     && rm "./bin/kics.tar.gz"

@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	baseDir := flag.String("d", ".", "the base directory for the recursive search")
+	baseDir := flag.String("d", "/opt/scan", "the base directory for the recursive search")
 	kicksEnable := flag.Bool("kics", true, "use kics")
 	keyFinderEnable := flag.Bool("kf", false, "use keyFinder") // experimental
 	gitSecretEnable := flag.Bool("gits", true, "use git Secret")
