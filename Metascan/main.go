@@ -63,13 +63,21 @@ func main() {
 		// TODO: Incrémenter high,medium,low et info en fonction de la sévérité
 		entry := Entry.New("TestName", "RCE on something", "HIGH", "CVE-TEST", "", "description blablabla", "FIX is ...")
 		entries = append(entries, *entry)
-		//fmt.Println(<-outputChannel)
+		fmt.Println(<-outputChannel)
 	}
 	var scan_types []string
-	if *kicksEnable {scan_types = append(scan_types,"kicks")}
-	if *keyFinderEnable {scan_types = append(scan_types,"key finder")}
-	if *gitSecretEnable {scan_types = append(scan_types,"git secrets")}
-	if *dependencyCheckerEnable {scan_types = append(scan_types,"dependency checker")}
+	if *kicksEnable {
+		scan_types = append(scan_types, "kicks")
+	}
+	if *keyFinderEnable {
+		scan_types = append(scan_types, "key finder")
+	}
+	if *gitSecretEnable {
+		scan_types = append(scan_types, "git secrets")
+	}
+	if *dependencyCheckerEnable {
+		scan_types = append(scan_types, "dependency checker")
+	}
 
 	var severity_counters [4]int
 	severity_counters[0] = high
@@ -77,8 +85,7 @@ func main() {
 	severity_counters[2] = low
 	severity_counters[3] = info
 
-	result:= Log.New(currentDate,scan_types,severity_counters,entries)
-
+	result := Log.New(currentDate, scan_types, severity_counters, entries)
 
 	elapsed := time.Since(start)
 	log.Printf("FileParser took %s", elapsed)
