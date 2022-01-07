@@ -29,7 +29,7 @@ func main() {
 	nbOutput := 0
 
 	if _, ok := extFiles["kics"]; ok && *kicksEnable {
-		k := Kics.New(*baseDir, ".", outputChannel)
+		k := Kics.New(*baseDir, "/opt/scan/", outputChannel)
 		go k.Scan()
 		nbOutput++
 	}
@@ -42,7 +42,7 @@ func main() {
 		//nbOutput++
 	}
 	if *dependencyCheckerEnable {
-		k := Dependency_checker.New(*baseDir, ".", outputChannel)
+		k := Dependency_checker.New(*baseDir, "/opt/scan/", outputChannel)
 		go k.Scan()
 		nbOutput++
 	}
