@@ -59,7 +59,7 @@ fi
 if ! [[ -f "$SCRIPT_DIR/bin/kics" ]]
 then
   wget https://github.com/Checkmarx/kics/releases/download/v1.4.7/kics_1.4.7_linux_x64.tar.gz -O "$SCRIPT_DIR/bin/kics.tar.gz"
-  tar -xf "$SCRIPT_DIR/bin/kics.tar.gz" -C "$SCRIPT_DIR/bin"
+  tar -xf "$SCRIPT_DIR/bin/kics.tar.gz" -C "$SCRIPT_DIR/bin/kics/"
   rm "$SCRIPT_DIR/bin/kics.tar.gz"
 fi
 
