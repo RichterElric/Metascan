@@ -1,6 +1,8 @@
 package main
 
 import (
+	"Metascan/main/log_templates/Entry"
+	"Metascan/main/log_templates/Log"
 	"Metascan/main/parser"
 	Dependency_checker "Metascan/main/scanners/Dependency-checker"
 	"Metascan/main/scanners/Kics"
@@ -47,10 +49,38 @@ func main() {
 		nbOutput++
 	}
 
+	var entries []Entry.Entry
+	var high = 0
+	var medium = 0
+	var low = 0
+	var info = 0
+
+	currentTime := time.Now()
+	currentDate := currentTime.Format("2006-01-02 15:04:05")
+
 	for i := 0; i < nbOutput; i++ {
-		fmt.Println(<-outputChannel)
+		// TODO: Récupérer les outputs
+		// TODO: Incrémenter high,medium,low et info en fonction de la sévérité
+		entry := Entry.New("TestName", "RCE on something", "HIGH", "CVE-TEST", "", "description blablabla", "FIX is ...")
+		entries = append(entries, *entry)
+		//fmt.Println(<-outputChannel)
 	}
+	var scan_types []string
+	if *kicksEnable {scan_types = append(scan_types,"kicks")}
+	if *keyFinderEnable {scan_types = append(scan_types,"key finder")}
+	if *gitSecretEnable {scan_types = append(scan_types,"git secrets")}
+	if *dependencyCheckerEnable {scan_types = append(scan_types,"dependency checker")}
+
+	var severity_counters [4]int
+	severity_counters[0] = high
+	severity_counters[1] = medium
+	severity_counters[2] = low
+	severity_counters[3] = info
+
+	result:= Log.New(currentDate,scan_types,severity_counters,entries)
+
 
 	elapsed := time.Since(start)
 	log.Printf("FileParser took %s", elapsed)
+	log.Println(result)
 }

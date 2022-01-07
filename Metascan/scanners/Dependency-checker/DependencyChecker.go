@@ -52,11 +52,12 @@ func (dc DependencyChecker) Scan() {
 		if vulnerabilities != nil {
 			j := 0
 			for _, _ = range jsonParsed.S("dependencies", strconv.Itoa(i), "vulnerabilities").Children() {
-				cve := jsonParsed.Path("dependencies." + strconv.Itoa(i) + ".vulnerabilities." + strconv.Itoa(j) + ".name")
-				severity := jsonParsed.Path("dependencies." + strconv.Itoa(i) + ".vulnerabilities." + strconv.Itoa(j) + ".severity")
-				description := jsonParsed.Path("dependencies." + strconv.Itoa(i) + ".vulnerabilities." + strconv.Itoa(j) + ".description")
+				//cve := jsonParsed.Path("dependencies." + strconv.Itoa(i) + ".vulnerabilities." + strconv.Itoa(j) + ".name")
+				//severity := jsonParsed.Path("dependencies." + strconv.Itoa(i) + ".vulnerabilities." + strconv.Itoa(j) + ".severity")
+				//description := jsonParsed.Path("dependencies." + strconv.Itoa(i) + ".vulnerabilities." + strconv.Itoa(j) + ".description")
 
-				fmt.Println(cve, severity, description)
+				//fmt.Println(cve, severity, description)
+				fmt.Println("...")
 
 				j++
 			}
