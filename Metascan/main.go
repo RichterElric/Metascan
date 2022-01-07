@@ -27,7 +27,7 @@ func main() {
 	extFiles := parser.GetFiles(*baseDir)
 	//log.Println(extFiles)
 
-	outputChannel := make(chan string)
+	outputChannel := make(chan []Entry.Entry)
 	nbOutput := 0
 
 	if _, ok := extFiles["kics"]; ok && *kicksEnable {
@@ -61,9 +61,11 @@ func main() {
 	for i := 0; i < nbOutput; i++ {
 		// TODO: Récupérer les outputs
 		// TODO: Incrémenter high,medium,low et info en fonction de la sévérité
-		entry := Entry.New("TestName", "RCE on something", "HIGH", "CVE-TEST", "", "description blablabla", "FIX is ...")
-		entries = append(entries, *entry)
-		fmt.Println(<-outputChannel)
+		entriesThread := <-outputChannel
+		for _, entry := range entriesThread {
+			entries = append(entries, entry)
+		}
+
 	}
 	var scan_types []string
 	if *kicksEnable {

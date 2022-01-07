@@ -1,7 +1,7 @@
 package Dependency_checker
 
 import (
-	"fmt"
+	"Metascan/main/log_templates/Entry"
 	"github.com/Jeffail/gabs/v2"
 	"io/ioutil"
 	"log"
@@ -12,10 +12,10 @@ import (
 type DependencyChecker struct {
 	path          string
 	output        string
-	outputChannel chan string
+	outputChannel chan []Entry.Entry
 }
 
-func New(_path string, _output string, _outputChannel chan string) DependencyChecker {
+func New(_path string, _output string, _outputChannel chan []Entry.Entry) DependencyChecker {
 	dc := DependencyChecker{_path, _output, _outputChannel}
 	return dc
 }
@@ -23,7 +23,6 @@ func New(_path string, _output string, _outputChannel chan string) DependencyChe
 func (dc DependencyChecker) Scan() {
 	cmd := exec.Command("./bin/dependency-check/bin/dependency-check.sh",
 		"--enableExperimental", "--go", "/usr/local/go/bin/go", "-f", "JSON", "-o", dc.output+"/dependency-check.json", "-s", dc.path)
-	//TODO : mettre les paths en absolu avec le docker
 
 	err := cmd.Run()
 
@@ -44,20 +43,21 @@ func (dc DependencyChecker) Scan() {
 	}
 	// S is shorthand for Search
 	i := 0
+	var entries []Entry.Entry
+
 	for _, _ = range jsonParsed.S("dependencies").Children() {
-		//filePath := jsonParsed.Path("dependencies." + strconv.Itoa(i) + ".filePath").String()
-		//fileName := jsonParsed.Path("dependencies." + strconv.Itoa(i) + ".fileName").String()
+		fileName := jsonParsed.Path("dependencies." + strconv.Itoa(i) + ".filePath").String()
 		vulnerabilities := jsonParsed.Path("dependencies." + strconv.Itoa(i) + ".vulnerabilities")
 
 		if vulnerabilities != nil {
 			j := 0
 			for _, _ = range jsonParsed.S("dependencies", strconv.Itoa(i), "vulnerabilities").Children() {
-				//cve := jsonParsed.Path("dependencies." + strconv.Itoa(i) + ".vulnerabilities." + strconv.Itoa(j) + ".name")
-				//severity := jsonParsed.Path("dependencies." + strconv.Itoa(i) + ".vulnerabilities." + strconv.Itoa(j) + ".severity")
-				//description := jsonParsed.Path("dependencies." + strconv.Itoa(i) + ".vulnerabilities." + strconv.Itoa(j) + ".description")
+				cve := jsonParsed.Path("dependencies." + strconv.Itoa(i) + ".vulnerabilities." + strconv.Itoa(j) + ".name").String()
+				severity := jsonParsed.Path("dependencies." + strconv.Itoa(i) + ".vulnerabilities." + strconv.Itoa(j) + ".severity").String()
+				description := jsonParsed.Path("dependencies." + strconv.Itoa(i) + ".vulnerabilities." + strconv.Itoa(j) + ".description").String()
 
-				//fmt.Println(cve, severity, description)
-				fmt.Println("...")
+				entry := Entry.New(fileName, "", severity, cve, "", description, "")
+				entries = append(entries, *entry)
 
 				j++
 			}
@@ -65,5 +65,5 @@ func (dc DependencyChecker) Scan() {
 		i++
 	}
 
-	dc.outputChannel <- string(body)
+	dc.outputChannel <- entries
 }
