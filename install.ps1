@@ -12,7 +12,7 @@ if (-not (Test-Path "$PSScriptRoot/bin"))
 # Install kics
 if (-not [System.IO.File]::Exists("$PSScriptRoot/bin/kics/kics.exe"))
 {
-    Invoke-WebRequest "https://github.com/Checkmarx/kics/releases/download/v1.4.7/kics_1.4.7_windows_x64.zip" -O "$PSScriptRoot/bin/kics.zip"
+    Invoke-WebRequest "https://github.com/Checkmarx/kics/releases/download/v1.4.9/kics_1.4.9_windows_x64.zip" -O "$PSScriptRoot/bin/kics.zip"
     Expand-Archive "$PSScriptRoot/bin/kics.zip" -DestinationPath "$PSScriptRoot/bin/kics/"
     Remove-Item -Path "$PSScriptRoot/bin/kics.zip"
 }
