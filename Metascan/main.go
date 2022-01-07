@@ -15,7 +15,7 @@ func main() {
 	kicksEnable := flag.Bool("kics", true, "use kics")
 	keyFinderEnable := flag.Bool("kf", false, "use keyFinder") // experimental
 	gitSecretEnable := flag.Bool("gits", true, "use git Secret")
-	dependencyCheckerEnable := flag.Bool("dc", true, "use git Secret")
+	dependencyCheckerEnable := flag.Bool("dc", true, "use dependencyChecker")
 
 	flag.Parse()
 
