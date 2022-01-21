@@ -7,6 +7,7 @@ import (
 	Dependency_checker "Metascan/main/scanners/Dependency-checker"
 	"Metascan/main/scanners/Kics"
 	"Metascan/main/writers/htmlWriter"
+	"Metascan/main/writers/jsonWriter"
 	"flag"
 	"fmt"
 	"log"
@@ -20,6 +21,7 @@ func main() {
 	keyFinderEnable := flag.Bool("kf", false, "use keyFinder") // experimental
 	gitSecretEnable := flag.Bool("gits", true, "use git Secret")
 	dependencyCheckerEnable := flag.Bool("dc", true, "use dependencyChecker")
+	formatOut := flag.String("f", "all", "format_out (json, html, ...)")
 
 	flag.Parse()
 
@@ -111,16 +113,19 @@ func main() {
 
 	result := Log.New(currentDate, scan_types, severity_counters, entries)
 
-	//TODO: Ajouter un paramètre pour choisir le type de fichier ? Si pas besoin, retirer les if et la variable output_type
-	var output_type = "html"
-	if (output_type == "html"){
+	switch *formatOut {
+	case "html":
 		htmlWriter.WriteHtml(*result)
-	}
-	if (output_type == "json"){
-		//writeJson()
+		break
+	case "json":
+		jsonWriter.WriteJSON(*result)
+		break
+	default:
+		htmlWriter.WriteHtml(*result)
+		jsonWriter.WriteJSON(*result)
+
 	}
 
 	elapsed := time.Since(start)
 	log.Printf("FileParser took %s", elapsed)
-	log.Println(result)
 }
