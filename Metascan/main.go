@@ -10,6 +10,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"strings"
 	"time"
 )
 
@@ -32,7 +33,7 @@ func main() {
 	nbOutput := 0
 
 	if _, ok := extFiles["kics"]; ok && *kicksEnable {
-		k := Kics.New(*baseDir, "/opt/scan", outputChannel)
+		k := Kics.New(*baseDir, "/opt/scan/", outputChannel)
 		go k.Scan()
 		nbOutput++
 	}
@@ -45,7 +46,7 @@ func main() {
 		//nbOutput++
 	}
 	if *dependencyCheckerEnable {
-		k := Dependency_checker.New(*baseDir, "/opt/scan", outputChannel)
+		k := Dependency_checker.New(*baseDir, "/opt/scan/", outputChannel)
 		go k.Scan()
 		nbOutput++
 	}
@@ -60,11 +61,31 @@ func main() {
 	currentDate := currentTime.Format("2006-01-02 15:04:05")
 
 	for i := 0; i < nbOutput; i++ {
-		// TODO: Récupérer les outputs
-		// TODO: Incrémenter high,medium,low et info en fonction de la sévérité
 		entriesThread := <-outputChannel
 		for _, entry := range entriesThread {
+			entry.Filename = strings.TrimPrefix(entry.Filename, "\"")
+			entry.Filename = strings.TrimSuffix(entry.Filename, "\"")
+			entry.Severity = strings.TrimPrefix(entry.Severity, "\"")
+			entry.Severity = strings.TrimSuffix(entry.Severity, "\"")
+			entry.CVE = strings.TrimPrefix(entry.CVE, "\"")
+			entry.CVE = strings.TrimSuffix(entry.CVE, "\"")
+			entry.CWE = strings.TrimPrefix(entry.CWE, "\"")
+			entry.CWE = strings.TrimSuffix(entry.CWE, "\"")
+
+
+			print(strings.ToLower(entry.Severity))
+			if strings.Contains(strings.ToLower(entry.Severity),"high") {
+				high += 1
+			} else if strings.Contains(strings.ToLower(entry.Severity),"medium") {
+				medium += 1
+			} else if strings.Contains(strings.ToLower(entry.Severity),"low") {
+				low += 1
+			} else if strings.Contains(strings.ToLower(entry.Severity),"info") {
+				info += 1
+			}
+
 			entries = append(entries, entry)
+
 		}
 
 	}
