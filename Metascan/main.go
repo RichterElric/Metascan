@@ -74,8 +74,6 @@ func main() {
 			entry.CWE = strings.TrimPrefix(entry.CWE, "\"")
 			entry.CWE = strings.TrimSuffix(entry.CWE, "\"")
 
-
-			print(strings.ToLower(entry.Severity))
 			if strings.Contains(strings.ToLower(entry.Severity),"high") {
 				high += 1
 			} else if strings.Contains(strings.ToLower(entry.Severity),"medium") {
@@ -85,9 +83,7 @@ func main() {
 			} else if strings.Contains(strings.ToLower(entry.Severity),"info") {
 				info += 1
 			}
-
 			entries = append(entries, entry)
-
 		}
 
 	}
