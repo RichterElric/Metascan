@@ -36,6 +36,9 @@ RUN wget https://github.com/jeremylong/DependencyCheck/releases/download/v6.5.0/
     && unzip -q "./bin/dep_check.zip" -d "./bin" \
     && rm "./bin/dep_check.zip"
 
+# Dotenv-linter
+RUN pip install dotenv-linter
+
 # Build the app
 RUN go build -o metascan
 

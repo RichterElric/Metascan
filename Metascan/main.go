@@ -5,6 +5,7 @@ import (
 	"Metascan/main/log_templates/Log"
 	"Metascan/main/parser"
 	Dependency_checker "Metascan/main/scanners/Dependency-checker"
+	Dotenv_linter "Metascan/main/scanners/Dotenv-linter"
 	"Metascan/main/scanners/Kics"
 	"Metascan/main/writers/htmlWriter"
 	"Metascan/main/writers/jsonWriter"
@@ -20,6 +21,7 @@ func main() {
 	keyFinderEnable := flag.Bool("kf", false, "use keyFinder") // experimental
 	gitSecretEnable := flag.Bool("gits", true, "use git Secret")
 	dependencyCheckerEnable := flag.Bool("dc", true, "use dependencyChecker")
+	dotenvLinterEnable := flag.Bool("dl", true, "use dotenv-linter")
 	formatOut := flag.String("f", "all", "format_out (json, html, ...)")
 
 	flag.Parse()
@@ -49,6 +51,11 @@ func main() {
 	if *dependencyCheckerEnable {
 		k := Dependency_checker.New(*baseDir, "/opt/scan", outputChannel)
 		go k.Scan()
+		nbOutput++
+	}
+	if _, ok := extFiles[".env"]; ok && *dotenvLinterEnable {
+		dl := Dotenv_linter.New(extFiles[".env"], "/opt/scan", outputChannel)
+		go dl.Scan()
 		nbOutput++
 	}
 
@@ -82,6 +89,9 @@ func main() {
 	}
 	if *dependencyCheckerEnable {
 		scan_types = append(scan_types, "dependency checker")
+	}
+	if *dotenvLinterEnable {
+		scan_types = append(scan_types, "dotenv_linter")
 	}
 
 	var severity_counters [4]int
