@@ -6,6 +6,7 @@ import (
 	"Metascan/main/parser"
 	Dependency_checker "Metascan/main/scanners/Dependency-checker"
 	"Metascan/main/scanners/Kics"
+	"Metascan/main/scanners/cppchecker"
 	"flag"
 	"fmt"
 	"log"
@@ -18,6 +19,7 @@ func main() {
 	keyFinderEnable := flag.Bool("kf", false, "use keyFinder") // experimental
 	gitSecretEnable := flag.Bool("gits", true, "use git Secret")
 	dependencyCheckerEnable := flag.Bool("dc", true, "use dependencyChecker")
+	cppcheckEnable := flag.Bool("cpp", true, "use cppchecker")
 
 	flag.Parse()
 
@@ -47,6 +49,15 @@ func main() {
 		k := Dependency_checker.New(*baseDir, "/opt/scan/", outputChannel)
 		go k.Scan()
 		nbOutput++
+	}
+	if *cppcheckEnable {
+		cpps := cppchecker.New(*baseDir)
+		if _, ok := extFiles[".c"]; ok {
+			cppchecker.Scan(cpps)
+		}
+		if _, ok := extFiles[".cpp"]; ok {
+			cppchecker.Scan(cpps)
+		}
 	}
 
 	var entries []Entry.Entry
