@@ -6,6 +6,7 @@ import (
 	"Metascan/main/parser"
 	Dependency_checker "Metascan/main/scanners/Dependency-checker"
 	"Metascan/main/scanners/Kics"
+	"Metascan/main/writers/htmlWriter"
 	"flag"
 	"fmt"
 	"log"
@@ -31,7 +32,7 @@ func main() {
 	nbOutput := 0
 
 	if _, ok := extFiles["kics"]; ok && *kicksEnable {
-		k := Kics.New(*baseDir, "/opt/scan/", outputChannel)
+		k := Kics.New(*baseDir, "/opt/scan", outputChannel)
 		go k.Scan()
 		nbOutput++
 	}
@@ -44,7 +45,7 @@ func main() {
 		//nbOutput++
 	}
 	if *dependencyCheckerEnable {
-		k := Dependency_checker.New(*baseDir, "/opt/scan/", outputChannel)
+		k := Dependency_checker.New(*baseDir, "/opt/scan", outputChannel)
 		go k.Scan()
 		nbOutput++
 	}
@@ -88,6 +89,15 @@ func main() {
 	severity_counters[3] = info
 
 	result := Log.New(currentDate, scan_types, severity_counters, entries)
+
+	//TODO: Ajouter un paramètre pour choisir le type de fichier ? Si pas besoin, retirer les if et la variable output_type
+	var output_type = "html"
+	if (output_type == "html"){
+		htmlWriter.WriteHtml(*result)
+	}
+	if (output_type == "json"){
+		//writeJson()
+	}
 
 	elapsed := time.Since(start)
 	log.Printf("FileParser took %s", elapsed)

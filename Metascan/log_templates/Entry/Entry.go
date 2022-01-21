@@ -1,13 +1,13 @@
 package Entry
 
 type Entry struct {
-	filename string
-	issue_name string
-	severity string
+	Filename string
+	Issue_name string
+	Severity string
 	CVE string
 	CWE string
-	description string
-	fix string
+	Description string
+	Fix string
 }
 
 func New(filename string, issue_name string, severity string, CVE string, CWE string, description string, fix string) *Entry {

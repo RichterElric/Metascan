@@ -4,17 +4,17 @@ import (
 	"Metascan/main/log_templates/Entry"
 )
 type SeverityCounter struct {
-	high int
-	medium int
-	low int
-	info int
+	High int
+	Medium int
+	Low int
+	Info int
 }
 
 type Log struct {
-	scan_date string
-	scan_types        []string
-	severity_counters SeverityCounter
-	entries           []Entry.Entry
+	Scan_date  string
+	Scan_types []string
+	Severity_counters SeverityCounter
+	Entries           []Entry.Entry
 }
 
 func New(scan_date string, scan_types []string, severity_counters [4]int, entries []Entry.Entry) *Log {
