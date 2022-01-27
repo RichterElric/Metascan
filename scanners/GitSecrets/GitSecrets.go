@@ -25,7 +25,7 @@ func New(_path string, _output string) (GitSecrets, error) {
 	}
 
 	//verification of the smooth operation of gitsecrets
-	cmd := exec.Command(fmt.Sprintf("%s", g.cmd[0]), fmt.Sprintf("%s", g.cmd[1]), "git", "secrets")
+	cmd := exec.Command(g.cmd[0], g.cmd[1], "git", "secrets")
 	cmd.Dir = g.path
 	_, err := cmd.Output()
 	if err != nil {
@@ -41,7 +41,7 @@ func New(_path string, _output string) (GitSecrets, error) {
 	}
 
 	//installation of hooks for gitsecrets
-	cmd = exec.Command(fmt.Sprintf("%s", g.cmd[0]), fmt.Sprintf("%s", g.cmd[1]), "git", "secrets", "--install", "-f")
+	cmd = exec.Command(g.cmd[0], g.cmd[1], "git", "secrets", "--install", "-f")
 	cmd.Dir = g.path
 	_, err = cmd.Output()
 	if err != nil {
@@ -50,7 +50,7 @@ func New(_path string, _output string) (GitSecrets, error) {
 	}
 
 	//we add the forbidden patterns
-	cmd = exec.Command(fmt.Sprintf("%s", g.cmd[0]), fmt.Sprintf("%s", g.cmd[1]), "git", "secrets", "--add-provider", "--", "cat", fmt.Sprintf("%s\\scanners\\GitSecrets\\forbidden_patterns", dirMeta))
+	cmd = exec.Command(g.cmd[0], g.cmd[1], "git", "secrets", "--add-provider", "--", "cat", fmt.Sprintf("%s\\scanners\\GitSecrets\\forbidden_patterns", dirMeta))
 	cmd.Dir = g.path
 	_, err = cmd.Output()
 	if err != nil {
@@ -92,7 +92,7 @@ func New(_path string, _output string) (GitSecrets, error) {
 
 func (g GitSecrets) Scan() string {
 	//we scan the whole repo
-	cmd := exec.Command(fmt.Sprintf("%s", g.cmd[0]), fmt.Sprintf("%s", g.cmd[1]), "git", "secrets", "--scan", "-r")
+	cmd := exec.Command(g.cmd[0], g.cmd[1], "git", "secrets", "--scan", "-r")
 	cmd.Dir = g.path
 	//the result is in the error stream
 	var errb bytes.Buffer
