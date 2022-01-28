@@ -6,6 +6,7 @@ import (
 	"Metascan/main/parser"
 	Dependency_checker "Metascan/main/scanners/Dependency-checker"
 	Dotenv_linter "Metascan/main/scanners/Dotenv-linter"
+	"Metascan/main/scanners/GitSecrets"
 	"Metascan/main/scanners/Kics"
 	"Metascan/main/scanners/cppchecker"
 	"Metascan/main/writers/htmlWriter"
@@ -49,6 +50,7 @@ func main() {
 	nbOutput := 0
 
 	cppChannel := make(chan bool)
+	gitSecretsChannel := make(chan bool)
 
 	if _, ok := extFiles["kics"]; ok && *kicksEnable {
 		k := Kics.New(*baseDir, "/opt/scan/metascan_results", outputChannel)
@@ -59,9 +61,16 @@ func main() {
 		fmt.Println("USE KEY FINDER")
 		//nbOutput++
 	}
+	goGitSecret := false
 	if *gitSecretEnable {
-		fmt.Println("USE GIT SECRET")
-		//nbOutput++
+		g, err := GitSecrets.New("/opt/scan/", gitSecretsChannel)
+		if err != nil {
+			fmt.Println(err)
+			log.Fatal(err)
+		} else {
+			go g.Scan()
+			goGitSecret = true
+		}
 	}
 	if *dependencyCheckerEnable {
 		k := Dependency_checker.New(*baseDir, "/opt/scan/metascan_results", outputChannel)
@@ -158,6 +167,9 @@ func main() {
 	}
 	if goCpp {
 		<-cppChannel
+	}
+	if goGitSecret {
+		<-gitSecretsChannel
 	}
 
 	elapsed := time.Since(start)

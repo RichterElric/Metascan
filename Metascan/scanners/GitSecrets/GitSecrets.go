@@ -5,27 +5,23 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
-	"runtime"
 )
 
 type GitSecrets struct {
-	path   string    //path of the git repo
-	output string    //not used
-	cmd    [2]string //not the same cmd command if windows or linux
+	path    string    //path of the git repo
+	channel chan bool //not used
 }
 
-func New(_path string, _output string) (GitSecrets, error) {
+func New(_path string, _channel chan bool) (GitSecrets, error) {
 	//creation of the object gitsecrets
-	g := GitSecrets{_path, _output, [2]string{"", ""}}
-	if runtime.GOOS == "windows" {
-		g.cmd[0] = "cmd"
-		g.cmd[1] = "/C"
-	}
+
+	g := GitSecrets{_path, _channel}
 
 	//verification of the smooth operation of gitsecrets
-	cmd := exec.Command(g.cmd[0], g.cmd[1], "git", "secrets")
+	cmd := exec.Command("git", "secrets")
 	cmd.Dir = g.path
 	_, err := cmd.Output()
 	if err != nil {
@@ -41,7 +37,7 @@ func New(_path string, _output string) (GitSecrets, error) {
 	}
 
 	//installation of hooks for gitsecrets
-	cmd = exec.Command(g.cmd[0], g.cmd[1], "git", "secrets", "--install", "-f")
+	cmd = exec.Command("git", "secrets", "--install", "-f")
 	cmd.Dir = g.path
 	_, err = cmd.Output()
 	if err != nil {
@@ -50,7 +46,7 @@ func New(_path string, _output string) (GitSecrets, error) {
 	}
 
 	//we add the forbidden patterns
-	cmd = exec.Command(g.cmd[0], g.cmd[1], "git", "secrets", "--add-provider", "--", "cat", fmt.Sprintf("%s\\scanners\\GitSecrets\\forbidden_patterns", dirMeta))
+	cmd = exec.Command("git", "secrets", "--add-provider", "--", "cat", fmt.Sprintf("%s/scanners/GitSecrets/forbidden_patterns", dirMeta))
 	cmd.Dir = g.path
 	_, err = cmd.Output()
 	if err != nil {
@@ -60,19 +56,17 @@ func New(_path string, _output string) (GitSecrets, error) {
 	}
 	//we rewrite ALL the patterns because gitsecrets is buggy as heck
 	//we open the git config file to copy in it at the end of the file
-	fileConf, err := os.OpenFile(fmt.Sprintf("%s\\.git\\config", g.path), os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+	fileConf, err := os.OpenFile(fmt.Sprintf("%s/.git/config", g.path), os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
 		fmt.Println(err)
 		return g, errors.New("can't open git config")
 	}
-	defer fileConf.Close()
 	//we open the patterns file to read it
-	filePatterns, err := os.Open(fmt.Sprintf("%s\\scanners\\GitSecrets\\forbidden_patterns", dirMeta))
+	filePatterns, err := os.Open(fmt.Sprintf("%s/scanners/GitSecrets/forbidden_patterns", dirMeta))
 	if err != nil {
 		fmt.Println(err)
 		return g, errors.New("can't open patterns' file")
 	}
-	defer filePatterns.Close()
 	//we write line by line the patterns
 	scannerPatterns := bufio.NewScanner(filePatterns)
 	for scannerPatterns.Scan() {
@@ -86,18 +80,37 @@ func New(_path string, _output string) (GitSecrets, error) {
 		fmt.Println(err)
 		return g, errors.New("scanner of patterns file is corrupted")
 	}
+	//we close the 2 files
+	err = filePatterns.Close()
+	if err != nil {
+		fmt.Println(err)
+		return g, errors.New("can't close patterns' file")
+	}
+	err = fileConf.Close()
+	if err != nil {
+		fmt.Println(err)
+		return g, errors.New("can't close config file")
+	}
 
 	return g, nil
 }
 
-func (g GitSecrets) Scan() string {
+func (g GitSecrets) Scan() {
 	//we scan the whole repo
-	cmd := exec.Command(g.cmd[0], g.cmd[1], "git", "secrets", "--scan", "-r")
+	cmd := exec.Command("git", "secrets", "--scan", "-r")
 	cmd.Dir = g.path
 	//the result is in the error stream
 	var errb bytes.Buffer
 	cmd.Stderr = &errb
 	//we run the command and return the result
 	cmd.Run()
-	return errb.String()
+	//we output the result
+	outfile, _ := os.OpenFile("/opt/scan/metascan_results/gitsecret.txt", os.O_RDWR|os.O_CREATE, 0755)
+	outfile.WriteString(errb.String())
+	err := outfile.Close()
+	if err != nil {
+		fmt.Println(err)
+		log.Fatal(err)
+	}
+	g.channel <- true
 }
