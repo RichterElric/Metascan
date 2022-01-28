@@ -16,6 +16,7 @@ RUN apk update \
     && apk add yarn \
     && apk add openjdk11 \
     && apk add cppcheck \
+    && apk add ruby \
     && apk add bash
 
 # install dependencies
@@ -37,6 +38,8 @@ RUN wget https://github.com/jeremylong/DependencyCheck/releases/download/v6.5.0/
     && unzip -q "./bin/dep_check.zip" -d "./bin" \
     && rm "./bin/dep_check.zip"
 
+RUN gem install bundler-audit
+RUN bundle audit update
 
 # cppcheck
 RUN mv /usr/bin/cppcheck ./bin/cppcheck
