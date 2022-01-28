@@ -13,11 +13,18 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
 	"strings"
 	"time"
 )
 
 func main() {
+	// Creating base foler
+	err := os.Mkdir("/opt/scan/metascan_results", 0755)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	baseDir := flag.String("d", "/opt/scan", "the base directory for the recursive search")
 	kicksEnable := flag.Bool("kics", true, "use kics")
 	keyFinderEnable := flag.Bool("kf", false, "use keyFinder") // experimental
@@ -41,7 +48,7 @@ func main() {
 	cppChannel := make(chan bool)
 
 	if _, ok := extFiles["kics"]; ok && *kicksEnable {
-		k := Kics.New(*baseDir, "/opt/scan/", outputChannel)
+		k := Kics.New(*baseDir, "/opt/scan/metascan_results", outputChannel)
 		go k.Scan()
 		nbOutput++
 	}
@@ -54,12 +61,12 @@ func main() {
 		//nbOutput++
 	}
 	if *dependencyCheckerEnable {
-		k := Dependency_checker.New(*baseDir, "/opt/scan/", outputChannel)
+		k := Dependency_checker.New(*baseDir, "/opt/scan/metascan_results", outputChannel)
 		go k.Scan()
 		nbOutput++
 	}
 	if _, ok := extFiles[".env"]; ok && *dotenvLinterEnable {
-		dl := Dotenv_linter.New(extFiles[".env"], "/opt/scan", outputChannel)
+		dl := Dotenv_linter.New(extFiles[".env"], "/opt/scan/metascan_results", outputChannel)
 		go dl.Scan()
 		nbOutput++
 	}

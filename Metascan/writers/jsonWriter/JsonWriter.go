@@ -14,7 +14,7 @@ func convertToJSON(log Log.Log) []byte {
 }
 
 func writeInFile(json []byte) {
-	_ = os.WriteFile("/opt/scan/result.json", json, 0644)
+	_ = os.WriteFile("/opt/scan/metascan_results/result.json", json, 0644)
 
 }
 

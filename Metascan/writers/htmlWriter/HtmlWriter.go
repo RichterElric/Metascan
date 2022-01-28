@@ -57,7 +57,7 @@ func convertToHtml(log Log.Log) string{
 }
 
 func writeInFile(html string) {
-	f, err := os.Create("/opt/scan/result.html")
+	f, err := os.Create("/opt/scan/metascan_results/result.html")
 
 	if err != nil {
 		log.Fatal(err)
