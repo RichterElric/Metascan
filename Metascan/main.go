@@ -7,9 +7,9 @@ import (
 	Dependency_checker "Metascan/main/scanners/Dependency-checker"
 	Dotenv_linter "Metascan/main/scanners/Dotenv-linter"
 	"Metascan/main/scanners/Kics"
+	"Metascan/main/scanners/cppchecker"
 	"Metascan/main/writers/htmlWriter"
 	"Metascan/main/writers/jsonWriter"
-	"Metascan/main/scanners/cppchecker"
 	"flag"
 	"fmt"
 	"log"
@@ -63,9 +63,9 @@ func main() {
 		go dl.Scan()
 		nbOutput++
 	}
+	goCpp := false
 	if *cppcheckEnable {
 		cpps := cppchecker.New(*baseDir, cppChannel)
-		goCpp := false
 		if _, ok := extFiles[".c"]; ok {
 			go cppchecker.Scan(cpps)
 			goCpp = true
@@ -96,13 +96,13 @@ func main() {
 			entry.CWE = strings.TrimPrefix(entry.CWE, "\"")
 			entry.CWE = strings.TrimSuffix(entry.CWE, "\"")
 
-			if strings.Contains(strings.ToLower(entry.Severity),"high") {
+			if strings.Contains(strings.ToLower(entry.Severity), "high") {
 				high += 1
-			} else if strings.Contains(strings.ToLower(entry.Severity),"medium") {
+			} else if strings.Contains(strings.ToLower(entry.Severity), "medium") {
 				medium += 1
-			} else if strings.Contains(strings.ToLower(entry.Severity),"low") {
+			} else if strings.Contains(strings.ToLower(entry.Severity), "low") {
 				low += 1
-			} else if strings.Contains(strings.ToLower(entry.Severity),"info") {
+			} else if strings.Contains(strings.ToLower(entry.Severity), "info") {
 				info += 1
 			}
 			entries = append(entries, entry)
@@ -134,7 +134,6 @@ func main() {
 	result := Log.New(currentDate, scan_types, severity_counters, entries)
 	// we wait for the cpp scan to end
 
-
 	switch *formatOut {
 	case "html":
 		htmlWriter.WriteHtml(*result)
@@ -147,7 +146,10 @@ func main() {
 		jsonWriter.WriteJSON(*result)
 
 	}
-	<-cppChannel
+	if goCpp {
+		<-cppChannel
+	}
+
 	elapsed := time.Since(start)
 	log.Printf("FileParser took %s", elapsed)
 }
