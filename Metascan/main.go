@@ -9,6 +9,7 @@ import (
 	"Metascan/main/scanners/GitSecrets"
 	"Metascan/main/scanners/Kics"
 	"Metascan/main/scanners/cppchecker"
+	Keyfinder "Metascan/main/scanners/keyfinder"
 	"Metascan/main/writers/htmlWriter"
 	"Metascan/main/writers/jsonWriter"
 	"flag"
@@ -31,7 +32,7 @@ func main() {
 
 	baseDir := flag.String("d", "/opt/scan", "the base directory for the recursive search")
 	kicksEnable := flag.Bool("kics", true, "use kics")
-	keyFinderEnable := flag.Bool("kf", false, "use keyFinder") // experimental
+	keyFinderEnable := flag.Bool("kf", true, "use keyFinder") // experimental
 	gitSecretEnable := flag.Bool("gits", true, "use git Secret")
 	dependencyCheckerEnable := flag.Bool("dc", true, "use dependencyChecker")
 	cppcheckEnable := flag.Bool("cpp", true, "use cppchecker")
@@ -50,6 +51,7 @@ func main() {
 	nbOutput := 0
 
 	cppChannel := make(chan bool)
+	keyFinderChannel := make(chan bool)
 	gitSecretsChannel := make(chan bool)
 
 	if _, ok := extFiles["kics"]; ok && *kicksEnable {
@@ -57,9 +59,11 @@ func main() {
 		go k.Scan()
 		nbOutput++
 	}
+	goKeyFinder := false
 	if *keyFinderEnable {
-		fmt.Println("USE KEY FINDER")
-		//nbOutput++
+		k := Keyfinder.New("/opt/scan/", keyFinderChannel)
+		go k.Scan()
+		goKeyFinder = true
 	}
 	goGitSecret := false
 	if *gitSecretEnable {
@@ -170,6 +174,9 @@ func main() {
 	}
 	if goGitSecret {
 		<-gitSecretsChannel
+	}
+	if goKeyFinder {
+		<-keyFinderChannel
 	}
 
 	elapsed := time.Since(start)

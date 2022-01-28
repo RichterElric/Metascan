@@ -2,25 +2,38 @@ package Keyfinder
 
 import (
 	"fmt"
+	"log"
+	"os"
 	"os/exec"
 )
 
 type Keyfinder struct {
-	path   string
-	output string
+	path    string
+	channel chan bool
 }
 
-func New(_path string, _output string) Keyfinder {
-	k := Keyfinder{_path, _output}
+func New(_path string, _channel chan bool) Keyfinder {
+	k := Keyfinder{_path, _channel}
 	return k
 }
 
-func (k Keyfinder) Scan() string {
-	fmt.Println("TODO: Tester le bon téléchargement de la dépendance")
-	fmt.Println("TODO: Récupérer le lieu de téléchargement pour l'insérer dans la commande")
-	result, error := exec.Command("python", "C:\\Users\\nicol\\Downloads\\keyfinder-master\\keyfinder.py", "-k", k.path).Output()
-	if error != nil {
-		fmt.Println(error.Error())
+func (k Keyfinder) Scan() {
+	result, err := exec.Command("python3", "./bin/keyfinder/keyfinder.py", "-k", k.path).Output()
+	if err != nil {
+		fmt.Println(err)
+		panic(err)
 	}
-	return string(result)
+	//we output the result
+	outfile, err := os.OpenFile("/opt/scan/metascan_results/keyfinder.txt", os.O_RDWR|os.O_CREATE, 0755)
+	if err != nil {
+		fmt.Println(err)
+		log.Fatal(err)
+	}
+	outfile.Write(result)
+	err = outfile.Close()
+	if err != nil {
+		fmt.Println(err)
+		log.Fatal(err)
+	}
+	k.channel <- true
 }
