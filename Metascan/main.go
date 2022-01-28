@@ -9,6 +9,7 @@ import (
 	"Metascan/main/scanners/Kics"
 	"Metascan/main/writers/htmlWriter"
 	"Metascan/main/writers/jsonWriter"
+	"Metascan/main/scanners/cppchecker"
 	"flag"
 	"fmt"
 	"log"
@@ -22,6 +23,7 @@ func main() {
 	keyFinderEnable := flag.Bool("kf", false, "use keyFinder") // experimental
 	gitSecretEnable := flag.Bool("gits", true, "use git Secret")
 	dependencyCheckerEnable := flag.Bool("dc", true, "use dependencyChecker")
+	cppcheckEnable := flag.Bool("cpp", true, "use cppchecker")
 	dotenvLinterEnable := flag.Bool("dl", true, "use dotenv-linter")
 	formatOut := flag.String("f", "all", "format_out (json, html, ...)")
 
@@ -35,6 +37,8 @@ func main() {
 
 	outputChannel := make(chan []Entry.Entry)
 	nbOutput := 0
+
+	cppChannel := make(chan bool)
 
 	if _, ok := extFiles["kics"]; ok && *kicksEnable {
 		k := Kics.New(*baseDir, "/opt/scan/", outputChannel)
@@ -58,6 +62,17 @@ func main() {
 		dl := Dotenv_linter.New(extFiles[".env"], "/opt/scan", outputChannel)
 		go dl.Scan()
 		nbOutput++
+	}
+	if *cppcheckEnable {
+		cpps := cppchecker.New(*baseDir, cppChannel)
+		goCpp := false
+		if _, ok := extFiles[".c"]; ok {
+			go cppchecker.Scan(cpps)
+			goCpp = true
+		}
+		if _, ok := extFiles[".cpp"]; ok && !goCpp {
+			go cppchecker.Scan(cpps)
+		}
 	}
 
 	var entries []Entry.Entry
@@ -92,7 +107,6 @@ func main() {
 			}
 			entries = append(entries, entry)
 		}
-
 	}
 	var scan_types []string
 	if *kicksEnable {
@@ -118,6 +132,8 @@ func main() {
 	severity_counters[3] = info
 
 	result := Log.New(currentDate, scan_types, severity_counters, entries)
+	// we wait for the cpp scan to end
+
 
 	switch *formatOut {
 	case "html":
@@ -131,7 +147,7 @@ func main() {
 		jsonWriter.WriteJSON(*result)
 
 	}
-
+	<-cppChannel
 	elapsed := time.Since(start)
 	log.Printf("FileParser took %s", elapsed)
 }
