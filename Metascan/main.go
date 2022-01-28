@@ -20,9 +20,12 @@ import (
 
 func main() {
 	// Creating base foler
-	err := os.Mkdir("/opt/scan/metascan_results", 0755)
-	if err != nil {
-		log.Fatal(err)
+	if _, err := os.Stat("/opt/scan/metascan_results"); os.IsNotExist(err) {
+		err := os.Mkdir("/opt/scan/metascan_results", 0755)
+
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	baseDir := flag.String("d", "/opt/scan", "the base directory for the recursive search")
