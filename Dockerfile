@@ -14,7 +14,7 @@ RUN apk update \
     && apk add zip \
     && apk add make \
     && apk add yarn \
-    && apk add openjdk11 \
+    #&& apk add openjdk11 \
     && apk add cppcheck \
     && apk add ruby \
     && apk add bash
