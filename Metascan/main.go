@@ -32,6 +32,8 @@ func main() {
 	outputChannel := make(chan []Entry.Entry)
 	nbOutput := 0
 
+	cppChannel := make(chan bool)
+
 	if _, ok := extFiles["kics"]; ok && *kicksEnable {
 		k := Kics.New(*baseDir, "/opt/scan/", outputChannel)
 		go k.Scan()
@@ -51,12 +53,14 @@ func main() {
 		nbOutput++
 	}
 	if *cppcheckEnable {
-		cpps := cppchecker.New(*baseDir)
+		cpps := cppchecker.New(*baseDir, cppChannel)
+		goCpp := false
 		if _, ok := extFiles[".c"]; ok {
-			cppchecker.Scan(cpps)
+			go cppchecker.Scan(cpps)
+			goCpp = true
 		}
-		if _, ok := extFiles[".cpp"]; ok {
-			cppchecker.Scan(cpps)
+		if _, ok := extFiles[".cpp"]; ok && !goCpp {
+			go cppchecker.Scan(cpps)
 		}
 	}
 
@@ -76,7 +80,6 @@ func main() {
 		for _, entry := range entriesThread {
 			entries = append(entries, entry)
 		}
-
 	}
 	var scan_types []string
 	if *kicksEnable {
@@ -99,6 +102,8 @@ func main() {
 	severity_counters[3] = info
 
 	result := Log.New(currentDate, scan_types, severity_counters, entries)
+	// we wait for the cpp scan to end
+	<-cppChannel
 
 	elapsed := time.Since(start)
 	log.Printf("FileParser took %s", elapsed)
