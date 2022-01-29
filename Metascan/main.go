@@ -8,6 +8,7 @@ import (
 	Dotenv_linter "Metascan/main/scanners/Dotenv-linter"
 	"Metascan/main/scanners/GitSecrets"
 	"Metascan/main/scanners/Kics"
+	"Metascan/main/scanners/PyLint"
 	"Metascan/main/scanners/cppchecker"
 	Keyfinder "Metascan/main/scanners/keyfinder"
 	"Metascan/main/writers/htmlWriter"
@@ -31,12 +32,13 @@ func main() {
 	}
 
 	baseDir := flag.String("d", "/opt/scan", "the base directory for the recursive search")
-	kicksEnable := flag.Bool("kics", true, "use kics")
-	keyFinderEnable := flag.Bool("kf", true, "use keyFinder") // experimental
+	kicksEnable := flag.Bool("kics", false, "use kics")
+	pyLintEnable := flag.Bool("pylint", true, "use PyLint")
+	keyFinderEnable := flag.Bool("kf", false, "use keyFinder") // experimental
 	gitSecretEnable := flag.Bool("gits", true, "use git Secret")
-	dependencyCheckerEnable := flag.Bool("dc", true, "use dependencyChecker")
-	cppcheckEnable := flag.Bool("cpp", true, "use cppchecker")
-	dotenvLinterEnable := flag.Bool("dl", true, "use dotenv-linter")
+	dependencyCheckerEnable := flag.Bool("dc", false, "use dependencyChecker")
+	cppcheckEnable := flag.Bool("cpp", false, "use cppchecker")
+	dotenvLinterEnable := flag.Bool("dl", false, "use dotenv-linter")
 	formatOut := flag.String("f", "all", "format_out (json, html, ...)")
 
 	flag.Parse()
@@ -53,11 +55,20 @@ func main() {
 	cppChannel := make(chan bool)
 	keyFinderChannel := make(chan bool)
 	gitSecretsChannel := make(chan bool)
+	pyLintChannel := make(chan bool)
 
 	if _, ok := extFiles["kics"]; ok && *kicksEnable {
 		k := Kics.New(*baseDir, "/opt/scan/metascan_results", outputChannel)
 		go k.Scan()
 		nbOutput++
+	}
+	goPyLint := false
+	if *pyLintEnable {
+		p := PyLint.New("/opt/scan/", pyLintChannel)
+		if _, ok := extFiles[".py"]; ok {
+			go p.Scan()
+			goPyLint = true
+		}
 	}
 	goKeyFinder := false
 	if *keyFinderEnable {
@@ -72,8 +83,10 @@ func main() {
 			fmt.Println(err)
 			log.Fatal(err)
 		} else {
-			go g.Scan()
-			goGitSecret = true
+			if _, ok := extFiles[".git"]; ok {
+				go g.Scan()
+				goGitSecret = true
+			}
 		}
 	}
 	if *dependencyCheckerEnable {
@@ -177,6 +190,9 @@ func main() {
 	}
 	if goKeyFinder {
 		<-keyFinderChannel
+	}
+	if goPyLint {
+		<-pyLintChannel
 	}
 
 	elapsed := time.Since(start)
