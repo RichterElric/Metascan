@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 )
 
 func printOneLog(entry Entry.Entry, result *string) {
@@ -25,14 +26,29 @@ func convertToHtml(log Log.Log) string{
 		"\t</head>\n" +
 		"\t<body>" +
 		"\t\t<h1>Scan results</h1>\n" +
-		"\t\t<p>Scan duration:" + log.Scan_date + "</p>\n" +
+		"\t\t<p>Scan duration:  " + log.Scan_date + "</p>\n" +
 		"\t\t<p>Scan types:</p>\n" +
 		"\t\t<ul>\n"
 	for _, s := range log.Scan_types {
 		result += "\t\t\t<li>" + s + "</li>\n"
 	}
-	result += "\t\t</ul>\n" +
-		"\t\t<p>Severity counters:</p>\n" +
+	result += "\t\t</ul>\n"
+
+	for _, value := range log.Scan_types {
+		if value != "kicks" && value != "dependency checker" {
+			result += "\t\t<b>Please look directly at the logs files in metascan_results folder for the following scans:"
+			break
+		}
+	}
+	for _, value := range log.Scan_types {
+		if value != "kicks" && value != "dependency checker" {
+			result += value + ", "
+		}
+	}
+	result = strings.TrimSuffix(result, ", ")
+	result += "</b>"
+
+	result += "\t\t<p>Severity counters:</p>\n" +
 		"\t\t<ul>\n" +
 		"\t\t\t<li>High: " + strconv.Itoa(log.Severity_counters.High) + "</li>\n" +
 		"\t\t\t<li>Medium: " + strconv.Itoa(log.Severity_counters.Medium) + "</li>\n" +
