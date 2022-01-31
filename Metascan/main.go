@@ -94,12 +94,12 @@ func main() {
 	}
 	goGitSecret := false
 	if *gitSecretEnable {
-		g, err := GitSecrets.New("/opt/scan/", gitSecretsChannel)
-		if err != nil {
-			fmt.Println(err)
-			log.Fatal(err)
-		} else {
-			if _, ok := extFiles[".git"]; ok {
+		if _, ok := extFiles[".git"]; ok {
+			g, err := GitSecrets.New("/opt/scan/", gitSecretsChannel)
+			if err != nil {
+				fmt.Println(err)
+				log.Fatal(err)
+			} else {
 				go g.Scan()
 				goGitSecret = true
 			}
