@@ -1,5 +1,6 @@
 # Metascan
-Outil de scan de code
+Outil de scan de projet avec analyse des dépendances, des fichiers de configuration
+et analyse statique de code.
 
 # Build le projet
 
@@ -18,13 +19,6 @@ sur linux :
 docker run --rm -v /chemin/absolu/vers/le/dossier:/opt/scan metascan -dc=false
 ```
 
-
-# Documentation Go
-
-- https://dl.hiva-network.com/Library/security/Black-Hat-Go_Go-Programming-For-Hackers-and-Pentesters.pdf
-- https://gobyexample.com/
-- https://gowebexamples.com/
-
 # Outils pour les scans
 
 (liste en cours de développement)
@@ -32,10 +26,15 @@ docker run --rm -v /chemin/absolu/vers/le/dossier:/opt/scan metascan -dc=false
 | File type | scanner |
 | :--- | :---: |
 | Docker, docker compose, kubernetes ... | [Kics](https://github.com/Checkmarx/kics)|
-| certificates | [keyfinder](https://github.com/CERTCC/keyfinder)|
-| password / keys | [git secret](https://github.com/awslabs/git-secrets)|
+| PMD : analyse static de code java & XML | [PMD](https://pmd.github.io/)| 
+|pyLint : analyse static de code python| [Pylint](https://pylint.org/)|
+|dotenv linter : analyse .env| [dotenv-linter](https://github.com/dotenv-linter/dotenv-linter)|
+| password / keys | [git-secret](https://github.com/awslabs/git-secrets)|
 |c / cpp analyse static de code | [cppcheck](https://cppcheck.sourceforge.io/)|
 
-# Repo pour le dev
+# Note sur les scanners 
 
-Repo avec pleins de types de programmes : https://github.com/TheRenegadeCoder/sample-programs
+| Scanner | Note |
+| :--- | :--- |
+|cppcheck| A utiliser à la racine d'un projet Cpp/C |
+|pyLint| A utiliser à la racine d'un projet python contenant un \_\_init\_\_.py |
