@@ -158,6 +158,15 @@ func main() {
 	if *gitSecretEnable {
 		scan_types = append(scan_types, "git secrets")
 	}
+	if *cppcheckEnable {
+		scan_types = append(scan_types, "cpp check")
+	}
+	if *pmdEnable {
+		scan_types = append(scan_types, "pmd")
+	}
+	if *pyLintEnable {
+		scan_types = append(scan_types, "pylint")
+	}
 	if *dependencyCheckerEnable {
 		scan_types = append(scan_types, "dependency checker")
 	}
