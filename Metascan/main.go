@@ -8,6 +8,7 @@ import (
 	Dotenv_linter "Metascan/main/scanners/Dotenv-linter"
 	"Metascan/main/scanners/GitSecrets"
 	"Metascan/main/scanners/Kics"
+	"Metascan/main/scanners/PMD"
 	"Metascan/main/scanners/PyLint"
 	"Metascan/main/scanners/cppchecker"
 	Keyfinder "Metascan/main/scanners/keyfinder"
@@ -32,13 +33,14 @@ func main() {
 	}
 
 	baseDir := flag.String("d", "/opt/scan", "the base directory for the recursive search")
-	kicksEnable := flag.Bool("kics", false, "use kics")
+	kicksEnable := flag.Bool("kics", true, "use kics")
+	pmdEnable := flag.Bool("PMD", true, "use PMD")
 	pyLintEnable := flag.Bool("pylint", true, "use PyLint")
-	keyFinderEnable := flag.Bool("kf", false, "use keyFinder") // experimental
+	keyFinderEnable := flag.Bool("kf", true, "use keyFinder") // experimental
 	gitSecretEnable := flag.Bool("gits", true, "use git Secret")
-	dependencyCheckerEnable := flag.Bool("dc", false, "use dependencyChecker")
-	cppcheckEnable := flag.Bool("cpp", false, "use cppchecker")
-	dotenvLinterEnable := flag.Bool("dl", false, "use dotenv-linter")
+	dependencyCheckerEnable := flag.Bool("dc", true, "use dependencyChecker")
+	cppcheckEnable := flag.Bool("cpp", true, "use cppchecker")
+	dotenvLinterEnable := flag.Bool("dl", true, "use dotenv-linter")
 	formatOut := flag.String("f", "all", "format_out (json, html, ...)")
 
 	flag.Parse()
@@ -56,11 +58,25 @@ func main() {
 	keyFinderChannel := make(chan bool)
 	gitSecretsChannel := make(chan bool)
 	pyLintChannel := make(chan bool)
+	pmdChannel := make(chan bool)
 
 	if _, ok := extFiles["kics"]; ok && *kicksEnable {
 		k := Kics.New(*baseDir, "/opt/scan/metascan_results", outputChannel)
 		go k.Scan()
 		nbOutput++
+	}
+	goPMD_java := false
+	goPMD_xml := false
+	if *pmdEnable {
+		pmd := PMD.New("/opt/scan/", pmdChannel)
+		if _, ok := extFiles[".jar"]; ok {
+			go pmd.Scan("java")
+			goPMD_java = true
+		}
+		if _, ok := extFiles[".xml"]; ok {
+			go pmd.Scan("xml")
+			goPMD_xml = true
+		}
 	}
 	goPyLint := false
 	if *pyLintEnable {
@@ -193,6 +209,12 @@ func main() {
 	}
 	if goPyLint {
 		<-pyLintChannel
+	}
+	if goPMD_java {
+		<-pmdChannel
+	}
+	if goPMD_xml {
+		<-pmdChannel
 	}
 
 	elapsed := time.Since(start)

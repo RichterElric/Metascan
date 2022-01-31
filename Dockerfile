@@ -14,7 +14,7 @@ RUN apk update \
     && apk add zip \
     && apk add make \
     && apk add yarn \
-    #&& apk add openjdk11 \
+    && apk add openjdk11 \
     && apk add cppcheck \
     && apk add ruby \
     && apk add bash
@@ -27,6 +27,11 @@ RUN mkdir bin \
     && mkdir ./bin/kics \
     && tar -xf "./bin/kics.tar.gz" -C "./bin/kics" \
     && rm "./bin/kics.tar.gz"
+
+# PMD
+RUN wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F6.42.0/pmd-bin-6.42.0.zip -O "./bin/pmd.zip" -q \
+    && unzip -q "./bin/pmd.zip" -d "./bin/"  \
+    && rm "./bin/pmd.zip"
 
 # gitsecret
 RUN git clone https://github.com/awslabs/git-secrets.git ./bin/gitsecret/ \
