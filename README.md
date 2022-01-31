@@ -31,6 +31,7 @@ docker run --rm -v /chemin/absolu/vers/le/dossier:/opt/scan metascan -dc=false
 |dotenv linter : analyse .env| [dotenv-linter](https://github.com/dotenv-linter/dotenv-linter)|
 | password / keys | [git-secret](https://github.com/awslabs/git-secrets)|
 |c / cpp analyse static de code | [cppcheck](https://cppcheck.sourceforge.io/)|
+|Dependency checker :  analyse de dépendances|[dependency checker](https://jeremylong.github.io/DependencyCheck/)|
 
 # Note sur les scanners 
 
