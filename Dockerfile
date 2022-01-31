@@ -52,12 +52,6 @@ RUN mv /usr/bin/cppcheck ./bin/cppcheck
 # Dotenv-linter
 RUN pip install dotenv-linter
 
-# Keyfinder (IMPORT FAILED)
-RUN git clone https://github.com/CERTCC/keyfinder.git ./bin/keyfinder \
-    && pip install python-magic
-#RUN pip install androguard #INFINITE LOAD
-#RUN pip install PyOpenSSL #CRASH
-
 #PyLint
 RUN pip install pylint --upgrade
 

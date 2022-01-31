@@ -11,7 +11,6 @@ import (
 	"Metascan/main/scanners/PMD"
 	"Metascan/main/scanners/PyLint"
 	"Metascan/main/scanners/cppchecker"
-	Keyfinder "Metascan/main/scanners/keyfinder"
 	"Metascan/main/writers/htmlWriter"
 	"Metascan/main/writers/jsonWriter"
 	"flag"
@@ -36,7 +35,6 @@ func main() {
 	kicksEnable := flag.Bool("kics", true, "use kics")
 	pmdEnable := flag.Bool("PMD", true, "use PMD")
 	pyLintEnable := flag.Bool("pylint", true, "use PyLint")
-	keyFinderEnable := flag.Bool("kf", true, "use keyFinder") // experimental
 	gitSecretEnable := flag.Bool("gits", true, "use git Secret")
 	dependencyCheckerEnable := flag.Bool("dc", true, "use dependencyChecker")
 	cppcheckEnable := flag.Bool("cpp", true, "use cppchecker")
@@ -55,7 +53,6 @@ func main() {
 	nbOutput := 0
 
 	cppChannel := make(chan bool)
-	keyFinderChannel := make(chan bool)
 	gitSecretsChannel := make(chan bool)
 	pyLintChannel := make(chan bool)
 	pmdChannel := make(chan bool)
@@ -85,12 +82,6 @@ func main() {
 			go p.Scan()
 			goPyLint = true
 		}
-	}
-	goKeyFinder := false
-	if *keyFinderEnable {
-		k := Keyfinder.New("/opt/scan/", keyFinderChannel)
-		go k.Scan()
-		goKeyFinder = true
 	}
 	goGitSecret := false
 	if *gitSecretEnable {
@@ -164,9 +155,6 @@ func main() {
 	if *kicksEnable {
 		scan_types = append(scan_types, "kicks")
 	}
-	if *keyFinderEnable {
-		scan_types = append(scan_types, "key finder")
-	}
 	if *gitSecretEnable {
 		scan_types = append(scan_types, "git secrets")
 	}
@@ -203,9 +191,6 @@ func main() {
 	}
 	if goGitSecret {
 		<-gitSecretsChannel
-	}
-	if goKeyFinder {
-		<-keyFinderChannel
 	}
 	if goPyLint {
 		<-pyLintChannel
