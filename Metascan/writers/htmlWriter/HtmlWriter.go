@@ -46,7 +46,14 @@ func convertToHtml(log Log.Log) string{
 		}
 	}
 	result = strings.TrimSuffix(result, ", ")
-	result += "</b>"
+	result += "</b></br>"
+
+	for _, value := range log.Scan_types {
+		if value == "pylint" {
+			result += "\t\t<i>Ignore pylint results if that contains only a 'File not Found' error on __init.py__.</i>"
+			break
+		}
+	}
 
 	result += "\t\t<p>Severity counters:</p>\n" +
 		"\t\t<ul>\n" +
