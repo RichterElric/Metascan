@@ -26,7 +26,7 @@ func convertToHtml(log Log.Log) string{
 		"\t</head>\n" +
 		"\t<body>" +
 		"\t\t<h1>Scan results</h1>\n" +
-		"\t\t<p>Scan duration:  " + log.Scan_date + "</p>\n" +
+		"\t\t<p>Scan date:  " + log.Scan_date + "</p>\n" +
 		"\t\t<p>Scan types:</p>\n" +
 		"\t\t<ul>\n"
 	for _, s := range log.Scan_types {
