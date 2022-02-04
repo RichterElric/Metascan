@@ -20,8 +20,6 @@ docker run --rm -v /chemin/absolu/vers/le/dossier:/opt/scan metascan -dc=false
 
 # Outils pour les scans
 
-(liste en cours de développement)
-
 | File type | Scanner |
 | :--- | :---: |
 | Docker, docker compose, kubernetes ... | [Kics](https://github.com/Checkmarx/kics)|
