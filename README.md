@@ -4,8 +4,8 @@ et analyse statique de code.
 
 # Build le projet
 
-- deux scripts sont présent dans le projet : install.ps1 & install.sh pour l'installation des dépendances.
-- Pour une installation plus pratique : un dockerfile est à disposition : dans le dossier racine Metascan
+- Deux scripts sont présents dans le projet : install.ps1 & install.sh pour l'installation des dépendances.
+- Pour une installation plus pratique : un dockerfile est à disposition dans le dossier racine Metascan
 ```bash
 docker build . -t metascan
 ```
@@ -33,7 +33,7 @@ docker run --rm -v /chemin/absolu/vers/le/dossier:/opt/scan metascan -dc=false
 |c / cpp analyse static de code | [cppcheck](https://cppcheck.sourceforge.io/)|
 |Dependency checker :  analyse de dépendances|[dependency checker](https://jeremylong.github.io/DependencyCheck/)|
 
-# Note sur les scanners 
+# Notes sur les scanners 
 
 | Scanner | Note |
 | :--- | :--- |
