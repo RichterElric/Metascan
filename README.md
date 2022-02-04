@@ -9,12 +9,11 @@ et analyse statique de code.
 ```bash
 docker build . -t metascan
 ```
-puis :
-sur windows
+Sur Windows
 ```bash
 docker run --rm -v C:\chemin\absolu\vers\le\dossier:/opt/scan metascan -dc=false
 ```
-sur linux :
+Sur Linux :
 ```bash
 docker run --rm -v /chemin/absolu/vers/le/dossier:/opt/scan metascan -dc=false
 ```
